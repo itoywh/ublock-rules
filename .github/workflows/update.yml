@@ -1,0 +1,109 @@
+name: Daily Rule Update
+
+on:
+  schedule:
+    # 每天 UTC 00:00 = 北京时间 08:00
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # 手动触发
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch all rule sources
+        run: |
+          set -e
+
+          # 1. EasyList → grep YouTube rules
+          echo ">>> Fetching EasyList..."
+          curl -sL --retry 3 'https://ublockorigin.pages.dev/thirdparties/easylist.txt' \
+            | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|ytimg\.com)' \
+            | grep -v 'ssyoutube\|nsfwyoutube\|biznews\|laurelbern' \
+            > /tmp/easylist-yt.txt
+          echo "  EasyList YT: $(wc -l < /tmp/easylist-yt.txt) rules"
+
+          # 2. 乘风 rule.txt
+          echo ">>> Fetching 乘风 rule.txt..."
+          curl -sL --retry 3 'https://raw.githubusercontent.com/xinggsf/Adblock-Plus-Rule/master/rule.txt' \
+            > /tmp/xinggsf-rule.txt
+          echo "  乘风 rule: $(wc -l < /tmp/xinggsf-rule.txt) lines"
+
+          # 3. 乘风 mv.txt
+          echo ">>> Fetching 乘风 mv.txt..."
+          curl -sL --retry 3 'https://raw.githubusercontent.com/xinggsf/Adblock-Plus-Rule/master/mv.txt' \
+            > /tmp/xinggsf-mv.txt
+          echo "  乘风 mv: $(wc -l < /tmp/xinggsf-mv.txt) lines"
+
+          # 4. 乘风 minority-mv.txt
+          echo ">>> Fetching 乘风 minority-mv.txt..."
+          curl -sL --retry 3 'https://raw.githubusercontent.com/xinggsf/Adblock-Plus-Rule/master/minority-mv.txt' \
+            > /tmp/xinggsf-minority.txt
+          echo "  乘风 minority-mv: $(wc -l < /tmp/xinggsf-minority.txt) lines"
+
+      - name: Generate merged rules
+        run: |
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          cat > ublock-rules.txt << 'HEADER_EOF'
+          ! ============================================================
+          ! Title: uBlock Rules (EasyList YT + 乘风)
+          ! Description: 合并 EasyList YouTube 规则 + 乘风 3 组规则
+          !               每日自动更新，uBlock Origin 订阅此文件即可
+          ! Homepage: https://github.com/itoywh/ublock-rules
+          ! Last updated: __TIMESTAMP__
+          ! ============================================================
+          ! Sources:
+          !   1. EasyList (YouTube only) - daily fetch
+          !   2. 乘风 rule.txt - 百度广告、通用中文广告
+          !   3. 乘风 mv.txt - 主流视频平台（优酷/爱奇艺/腾讯/B站/斗鱼/虎牙等）
+          !   4. 乘风 minority-mv.txt - 小众视频站
+          ! ============================================================
+
+          HEADER_EOF
+
+          sed -i "s/__TIMESTAMP__/${TIMESTAMP}/" ublock-rules.txt
+
+          {
+            echo ""
+            echo "! ===== EasyList YouTube Rules ($(wc -l < /tmp/easylist-yt.txt) rules) ====="
+            cat /tmp/easylist-yt.txt
+
+            echo ""
+            echo "! ===== 乘风 rule.txt ($(wc -l < /tmp/xinggsf-rule.txt) lines) ====="
+            cat /tmp/xinggsf-rule.txt
+
+            echo ""
+            echo "! ===== 乘风 mv.txt ($(wc -l < /tmp/xinggsf-mv.txt) lines) ====="
+            cat /tmp/xinggsf-mv.txt
+
+            echo ""
+            echo "! ===== 乘风 minority-mv.txt ($(wc -l < /tmp/xinggsf-minority.txt) lines) ====="
+            cat /tmp/xinggsf-minority.txt
+          } >> ublock-rules.txt
+
+          echo ""
+          echo "=== Final ==="
+          echo "Total lines: $(wc -l < ublock-rules.txt)"
+          echo "Total rules: $(grep -cE '^\|\||^@@\|\|' ublock-rules.txt || true)"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "Rule Bot"
+          git config user.email "bot@ublock-rules.local"
+
+          git add ublock-rules.txt
+
+          if git diff --cached --quiet; then
+            echo "No changes, nothing to commit."
+          else
+            CHANGES=$(git diff --cached --stat ublock-rules.txt)
+            git commit -m "Auto-update: $(date -u '+%Y-%m-%d')
+
+          ${CHANGES}"
+            git push
+            echo "✅ Pushed updated rules!"
+          fi
