@@ -3,7 +3,7 @@
 ! Description: 合并 EasyList YouTube 规则 + 乘风 3 组规则
 !               每日自动更新，uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-05-29 12:02 UTC
+! Last updated: 2026-05-30 13:26 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
@@ -12,7 +12,8 @@
 !   4. 乘风 minority-mv.txt - 小众视频站
 ! ============================================================
 
-! ===== EasyList YouTube Rules =====
+
+! ===== EasyList YouTube Rules (31 rules) =====
 _reklama_$domain=~youtube.com
 ads.google.com,youtube.com#@#.video-ads
 ||googlesyndication.com^$domain=blogto.com|youtube.com
@@ -45,7 +46,7 @@ youtube.com##ytd-item-section-renderer > .ytd-item-section-renderer > ytd-ad-slo
 @@||tv.youtube.com^$generichide
 @@||www.youtube.com^$generichide
 
-! ===== 乘风 rule.txt =====
+! ===== 乘风 rule.txt (1248 lines) =====
 [Adblock Plus 2.0]
 ! Title: 乘风 广告过滤规则
 ! Version: 202509081
@@ -1295,7 +1296,7 @@ vegaschina.cn
 xshellcn.com
 yihuifu.cn
 www.zhzzx.com
-! ===== 乘风 mv.txt =====
+! ===== 乘风 mv.txt (180 lines) =====
 [Adblock Plus 2.0]
 ! Title: 乘风 视频过滤规则 uBlock Origin 1.56
 ! Version: 202509101
@@ -1477,7 +1478,7 @@ yatu.tv,yhdm7.com,yhdm95.com,xdm530.com##+js(aopw,document.oncontextmenu)
 
 ||tracker.$xhr,websocket,script,ping
 stgowan.com
-! ===== 乘风 minority-mv.txt =====
+! ===== 乘风 minority-mv.txt (88 lines) =====
 [Adblock Plus 2.0]
 ! Title: 乘风 小众视频过滤规则
 ! Version: 202601201
