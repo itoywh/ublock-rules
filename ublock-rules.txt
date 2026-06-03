@@ -3,7 +3,7 @@
 ! Description: 合并 EasyList YouTube 规则 + 乘风 3 组规则
 !               每日自动更新，uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-06-02 04:21 UTC
+! Last updated: 2026-06-03 04:41 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
