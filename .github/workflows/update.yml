@@ -2,8 +2,8 @@ name: Daily Rule Update
 
 on:
   schedule:
-    # 每天 UTC 00:00 = 北京时间 08:00
-    - cron: '0 0 * * *'
+    # 每天 UTC 22:00 = 北京时间 06:00
+    - cron: '0 22 * * *'
   workflow_dispatch:
     # 手动触发
 
