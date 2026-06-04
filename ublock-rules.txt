@@ -1,15 +1,17 @@
 ! ============================================================
-! Title: uBlock Rules (EasyList YT + 乘风)
-! Description: 合并 EasyList YouTube 规则 + 乘风 3 组规则
-!               每日自动更新，uBlock Origin 订阅此文件即可
+! Title: uBlock Rules (EasyList YT + AdGuard YT + 乘风)
+! Description: 合并 EasyList YouTube 规则 + AdGuard Filter 2
+!               YouTube JS 注入规则 + 乘风 3 组中文广告规则
+!               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-06-03 04:41 UTC
+! Last updated: 2026-06-04 03:55 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
-!   2. 乘风 rule.txt - 百度广告、通用中文广告
-!   3. 乘风 mv.txt - 主流视频平台（优酷/爱奇艺/腾讯/B站/斗鱼/虎牙等）
-!   4. 乘风 minority-mv.txt - 小众视频站
+!   2. AdGuard Filter 2 (YouTube JS injection + network + CSS)
+!   3. 乘风 rule.txt - 百度广告、通用中文广告
+!   4. 乘风 mv.txt - 主流视频平台（优酷/爱奇艺/腾讯/B站/斗鱼/虎牙等）
+!   5. 乘风 minority-mv.txt - 小众视频站
 ! ============================================================
 
 
@@ -45,6 +47,40 @@ youtube.com##ytd-item-section-renderer > .ytd-item-section-renderer > ytd-ad-slo
 @@||music.youtube.com^$generichide
 @@||tv.youtube.com^$generichide
 @@||www.youtube.com^$generichide
+
+! ===== AdGuard Filter 2 YouTube Rules (31 rules) =====
+! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测
+youtube.com#@##player-ads
+@@||static.doubleclick.net/instream/ad_status.js$domain=youtube.com
+youtube.com##+js(set-constant, google_ad_status, 1)
+youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.adPlacements, undefined)
+youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.adSlots, undefined)
+youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.playerAds, undefined)
+youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, playerResponse.adPlacements, undefined)
+m.youtube.com,youtubekids.com,youtube-nocookie.com##+js(json-prune, playerResponse.adPlacements playerResponse.playerAds playerResponse.adSlots adPlacements playerAds adSlots)
+||googlevideo.com/initplayback?source=youtube&*&c=TVHTML5&oad=$xhr,domain=youtube.com
+www.youtube.com##+js(adjust-setTimeout, [native code], 17000, 0.001)
+! Fix ads on https://www.youtube.com/shorts/
+youtube.com##+js(json-prune, entries.[-].command.reelWatchEndpoint.adClientParams.isAd)
+www.youtube.com##+js(set-constant, ytcfg.data_.EXPERIMENT_FLAGS.web_streaming_watch, false)
+www.youtube.com##+js(no-setTimeout-if, ()\,a\,b), 5000)
+m.youtube.com##+js(json-prune, playerResponse.messages.[].youThereRenderer)
+||youtube.com/get_video_info?*=adunit&$important
+||youtube.com/get_video_info?$~3p,badfilter
+@@||youtube.com/get_video_info*&el=editpage
+@@||youtube.com/get_video_info?*embedded$~3p,other
+||redirector.googlevideo.com/*&source=dclk_video_ads&$redirect=noop.txt,domain=sbs.com.au,important,image,media,subdocument,stylesheet,script,xhr,other
+youtube-nocookie.com##.ytp-ad-progress-list
+youtube.com##ytd-rich-grid-row > #contents > ytd-rich-item-renderer:has(> #content > ytd-display-ad-renderer)
+youtube.com##ytd-rich-grid-renderer ytd-rich-item-renderer div > ytd-display-ad-renderer:upward(2)
+||googlevideo.com/videoplayback?$media,redirect=noop-1s.mp4,domain=safeframe.googlesyndication.com
+@@||googlevideo.com/videoplayback/*dclk_video_ads$domain=10play.com.au|10.com.au
+@@||pubads.g.doubleclick.net/gampad/ads?ad_rule=0&d_imp=1&gdfp_req=1&iu=%2F6762%2Fmkt.ythome_1x1$domain=youtube.com
+@@||pubads.g.doubleclick.net/gampad/ads?ad_rule=0&d_imp=1&gdfp_req=1&impl=ifr$domain=youtube.com
+@@||youtube.com/my_video_ad$document
+@@||ytimg.com^*_banner$domain=youtube.com
+! For videos to play in IE9 (http://www.youtube.com/user/monkeyseevideos?feature=CAgQwRs%3D)
+@@||ad.doubleclick.net/*/adi/com.ytbc/$domain=youtube.com
 
 ! ===== 乘风 rule.txt (1248 lines) =====
 [Adblock Plus 2.0]
