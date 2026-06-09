@@ -23,7 +23,7 @@ jobs:
           # 1. EasyList -> grep YouTube rules
           echo ">>> Fetching EasyList..."
           curl -sL --retry 3 'https://ublockorigin.pages.dev/thirdparties/easylist.txt' \
-            | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|ytimg\.com)' \
+            | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|ytimg\.com|doubleclick\.net|googlesyndication\.com|googleadservices\.com)' \
             | grep -v 'ssyoutube\|nsfwyoutube\|biznews\|laurelbern' \
             > /tmp/easylist-yt.txt
           echo "  EasyList YT: $(wc -l < /tmp/easylist-yt.txt) rules"
@@ -31,7 +31,7 @@ jobs:
           # 2. AdGuard Filter 2 -> grep YouTube rules (JS injection + network + CSS)
           echo ">>> Fetching AdGuard Filter 2..."
           curl -sL --retry 3 'https://filters.adtidy.org/extension/ublock/filters/2_without_easylist.txt' \
-            | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|youtube-nocookie\.com|youtubekids\.com)' \
+            | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|youtube-nocookie\.com|youtubekids\.com|doubleclick\.net|googlesyndication\.com|googleadservices\.com)' \
             | grep -v 'denyallow' \
             | grep -v 'nsfwyoutube' \
             | grep -vE '(ssyoutube|y2mate|y2meta|youtube4kdownloader|youtubevanced)' \
