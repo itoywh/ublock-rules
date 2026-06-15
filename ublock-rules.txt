@@ -4,7 +4,7 @@
 !               YouTube JS 注入规则 + 乘风 3 组中文广告规则
 !               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-06-14 23:11 UTC
+! Last updated: 2026-06-15 23:48 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
@@ -131,7 +131,7 @@ www.google.*##a[href^="https://www.googleadservices.com/pagead/aclk?"]
 @@||g.doubleclick.net/aclk?$popup,domain=bodas.com.mx|bodas.net|casamentos.com.br|casamentos.pt|casamiento.com.uy|casamientos.com.ar|mariages.net|matrimonio.com|matrimonio.com.co|matrimonio.com.pe|matrimonios.cl|pianobuyer.com|weddingspot.co.uk|zillow.com
 @@||www.ticketmaster.$popup,domain=adclick.g.doubleclick.net
 
-! ===== AdGuard Filter 2 YouTube Rules (1031 rules) =====
+! ===== AdGuard Filter 2 YouTube Rules (1032 rules) =====
 ! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测
 ! Good: ||doubleclick.net^$third-party
 ! Good: ||ad.doubleclick.net^
@@ -917,6 +917,7 @@ docsach24.co##+js(prevent-fetch, pagead2.googlesyndication.com)
 @@||static.doubleclick.net/instream/ad_status.js$domain=linkneverdie.com
 paramountplus.com##+js(xml-prune, Period[id*="-roll-"][id*="-ad-"], , /pubads\.g\.doubleclick\.net\/ondemand\/.*\/content\/.*\/vid\/.*\/streams\/.*\/manifest\.mpd|pubads\.g\.doubleclick.net\/ondemand\/hls\/.*\.m3u8|dai\.google\.com\/ondemand\/dash\/content\/.*\/manifest\.mpd/)
 /cdn-cgi/pe/bag2?r[]=*securepubads.g.doubleclick.net
+||workers.dev^$header=x-target-domain:pagead2.googlesyndication.com
 youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.adPlacements, undefined)
 youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.adSlots, undefined)
 youtubekids.com,youtube-nocookie.com,youtube.com##+js(set-constant, ytInitialPlayerResponse.playerAds, undefined)
