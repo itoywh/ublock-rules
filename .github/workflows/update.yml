@@ -26,7 +26,7 @@ jobs:
             | grep -iE '(youtube\.com|youtu\.be|googlevideo\.com|ytimg\.com|doubleclick\.net|googlesyndication\.com|googleadservices\.com)' \
             | grep -v 'ssyoutube\|nsfwyoutube\|biznews\|laurelbern' \
             > /tmp/easylist-yt.txt
-          echo "  EasyList YT: $(wc -l < /tmp/easylist-yt.txt) rules"
+          echo "  EasyList YT: $(wc -l < /tmp/easylist-yt.txt) lines"
 
           # 2. AdGuard Filter 2 -> grep YouTube rules (JS injection + network + CSS)
           echo ">>> Fetching AdGuard Filter 2..."
@@ -37,7 +37,7 @@ jobs:
             | grep -vE '(ssyoutube|y2mate|y2meta|youtube4kdownloader|youtubevanced)' \
             | grep -vE '(filmvilag\.me|playmogo\.com|hardwaretimes\.com|cinejosh\.com|itvbd\.com|lubiehrubie\.pl|1link\.vip|instadp\.com|sarapbabe\.com|akhbarelyom|icutit\.ca|sxyprn\.net|filma24\.|javarevisited|masterani\.me|ds2play\.com|doods\.pro|do0od|do7go|dood\.|vide0\.net)' \
             > /tmp/adguard-yt.txt
-          echo "  AdGuard YT: $(wc -l < /tmp/adguard-yt.txt) rules"
+          echo "  AdGuard YT: $(wc -l < /tmp/adguard-yt.txt) lines"
 
           # 3. 乘风 rule.txt
           echo ">>> Fetching 乘风 rule.txt..."
@@ -58,8 +58,26 @@ jobs:
           echo "  乘风 minority-mv: $(wc -l < /tmp/xinggsf-minority.txt) lines"
 
       - name: Generate merged rules
+        id: generate
         run: |
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+
+          # Count actual rules (skip comment lines starting with ! and blank lines)
+          count_rules() { grep -cvE '^!|^[[:space:]]*$' "$1" || true; }
+
+          EL_COUNT=$(count_rules /tmp/easylist-yt.txt)
+          AG_COUNT=$(count_rules /tmp/adguard-yt.txt)
+          CF_RULE=$(count_rules /tmp/xinggsf-rule.txt)
+          CF_MV=$(count_rules /tmp/xinggsf-mv.txt)
+          CF_MINOR=$(count_rules /tmp/xinggsf-minority.txt)
+          TOTAL=$((EL_COUNT + AG_COUNT + CF_RULE + CF_MV + CF_MINOR))
+
+          echo "el_count=${EL_COUNT}" >> $GITHUB_OUTPUT
+          echo "ag_count=${AG_COUNT}" >> $GITHUB_OUTPUT
+          echo "cf_rule=${CF_RULE}" >> $GITHUB_OUTPUT
+          echo "cf_mv=${CF_MV}" >> $GITHUB_OUTPUT
+          echo "cf_minor=${CF_MINOR}" >> $GITHUB_OUTPUT
+          echo "total=${TOTAL}" >> $GITHUB_OUTPUT
 
           cat > ublock-rules.txt << 'HEADER_EOF'
           ! ============================================================
@@ -84,32 +102,36 @@ jobs:
 
           {
             echo ""
-            echo "! ===== EasyList YouTube Rules ($(wc -l < /tmp/easylist-yt.txt) rules) ====="
+            echo "! ===== EasyList YouTube Rules (${EL_COUNT} rules) ====="
             cat /tmp/easylist-yt.txt
 
             echo ""
-            echo "! ===== AdGuard Filter 2 YouTube Rules ($(wc -l < /tmp/adguard-yt.txt) rules) ====="
+            echo "! ===== AdGuard Filter 2 YouTube Rules (${AG_COUNT} rules) ====="
             echo "! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测"
             cat /tmp/adguard-yt.txt
 
             echo ""
-            echo "! ===== 乘风 rule.txt ($(wc -l < /tmp/xinggsf-rule.txt) lines) ====="
+            echo "! ===== 乘风 rule.txt (${CF_RULE} rules) ====="
             cat /tmp/xinggsf-rule.txt
 
             echo ""
-            echo "! ===== 乘风 mv.txt ($(wc -l < /tmp/xinggsf-mv.txt) lines) ====="
+            echo "! ===== 乘风 mv.txt (${CF_MV} rules) ====="
             cat /tmp/xinggsf-mv.txt
 
             echo ""
-            echo "! ===== 乘风 minority-mv.txt ($(wc -l < /tmp/xinggsf-minority.txt) lines) ====="
+            echo "! ===== 乘风 minority-mv.txt (${CF_MINOR} rules) ====="
             cat /tmp/xinggsf-minority.txt
           } >> ublock-rules.txt
 
           echo ""
           echo "=== Final ==="
           echo "Total lines: $(wc -l < ublock-rules.txt)"
-          echo "Total blocking rules: $(grep -cE '^\|\||^@@\|\|' ublock-rules.txt || true)"
-          echo "Total cosmetic rules: $(grep -cE '##' ublock-rules.txt || true)"
+          echo "EasyList YT: ${EL_COUNT}"
+          echo "AdGuard YT: ${AG_COUNT}"
+          echo "乘风 rule: ${CF_RULE}"
+          echo "乘风 mv: ${CF_MV}"
+          echo "乘风 minority: ${CF_MINOR}"
+          echo "Total rules: ${TOTAL}"
 
       - name: Commit and push if changed
         id: commit
@@ -123,45 +145,58 @@ jobs:
             echo "No changes, nothing to commit."
             echo "changed=false" >> $GITHUB_OUTPUT
           else
-            DATE_TAG="v$(date -u '+%Y-%m-%d')"
             MSG="Auto-update: $(date -u '+%Y-%m-%d')"
             CHANGES=$(git diff --cached --stat ublock-rules.txt | tr '\n' ' ')
             git commit -m "${MSG} - ${CHANGES}"
             git push
-
-            # Check if tag already exists (e.g. manual re-run today)
-            if git rev-parse "$DATE_TAG" >/dev/null 2>&1; then
-              echo "Tag $DATE_TAG already exists, skipping release"
-              echo "changed=false" >> $GITHUB_OUTPUT
-            else
-              echo "changed=true" >> $GITHUB_OUTPUT
-              echo "date_tag=${DATE_TAG}" >> $GITHUB_OUTPUT
-              echo "Pushed updated rules, tag: ${DATE_TAG}"
-            fi
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Release
+      - name: Update release
         if: steps.commit.outputs.changed == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.commit.outputs.date_tag }}
-          name: ${{ steps.commit.outputs.date_tag }}
-          body: |
-            ## 规则更新
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DATE="$(date -u '+%Y-%m-%d')"
+          EL_COUNT="${{ steps.generate.outputs.el_count }}"
+          AG_COUNT="${{ steps.generate.outputs.ag_count }}"
+          CF_RULE="${{ steps.generate.outputs.cf_rule }}"
+          CF_MV="${{ steps.generate.outputs.cf_mv }}"
+          CF_MINOR="${{ steps.generate.outputs.cf_minor }}"
+          TOTAL="${{ steps.generate.outputs.total }}"
 
-            ### 数据来源
-            -  EasyList (YouTube 规则)
-            -  AdGuard Filter 2 (YouTube JS 注入 + 网络拦截 + CSS)
-            -  乘风 rule.txt (百度/通用中文广告)
-            -  乘风 mv.txt (主流视频平台)
-            -  乘风 minority-mv.txt (小众视频站)
+          # Delete old release and tag if they exist
+          gh release delete latest --yes 2>/dev/null || true
+          git push origin --delete latest 2>/dev/null || true
 
-            ### 订阅链接
-            ```
-            https://raw.githubusercontent.com/itoywh/ublock-rules/main/ublock-rules.txt
-            ```
+          # Create release body
+          cat > /tmp/release_body.md << BODY
+          ## 规则更新 - ${DATE}
 
-            ### 自动更新
-            每日 UTC 22:00（北京时间 06:00）自动执行
-          files: ublock-rules.txt
-          make_latest: true
+          ### 规则统计
+          | 来源 | 有效规则数 |
+          |------|-----------|
+          | EasyList (YouTube) | ${EL_COUNT} |
+          | AdGuard Filter 2 (YouTube) | ${AG_COUNT} |
+          | 乘风 rule.txt | ${CF_RULE} |
+          | 乘风 mv.txt | ${CF_MV} |
+          | 乘风 minority-mv.txt | ${CF_MINOR} |
+          | **合计** | **${TOTAL}** |
+
+          ### 订阅链接
+          \`\`\`
+          https://raw.githubusercontent.com/itoywh/ublock-rules/main/ublock-rules.txt
+          \`\`\`
+
+          ### 自动更新
+          每日 UTC 22:00（北京时间 06:00）自动执行
+          BODY
+
+          # Create new release with tag "latest"
+          gh release create latest \
+            --title "ublock-rules (${DATE})" \
+            --notes-file /tmp/release_body.md \
+            --target main \
+            ublock-rules.txt
+
+          echo "Release updated: latest (${DATE})"
