@@ -4,7 +4,7 @@
 !               YouTube JS 注入规则 + 乘风 3 组中文广告规则
 !               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-07-08 23:10 UTC
+! Last updated: 2026-07-09 23:13 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
@@ -132,7 +132,7 @@ www.google.*##a[href^="https://www.googleadservices.com/pagead/aclk?"]
 @@||g.doubleclick.net/aclk?$popup,domain=bodas.com.mx|bodas.net|casamentos.com.br|casamentos.pt|casamiento.com.uy|casamientos.com.ar|mariages.net|matrimonio.com|matrimonio.com.co|matrimonio.com.pe|matrimonios.cl|pianobuyer.com|weddingspot.co.uk|zillow.com
 @@||www.ticketmaster.$popup,domain=adclick.g.doubleclick.net
 
-! ===== AdGuard Filter 2 YouTube Rules (1025 rules) =====
+! ===== AdGuard Filter 2 YouTube Rules (1024 rules) =====
 ! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测
 ! Good: ||doubleclick.net^$third-party
 ! Good: ||ad.doubleclick.net^
@@ -416,7 +416,6 @@ now.us,now.gg##+js(prevent-fetch, pagead2.googlesyndication.com)
 @@||pubads.g.doubleclick.net/ssai/event/*/streams$xhr,domain=news8000.com
 dlpanda.com##+js(no-xhr-if, pagead2.googlesyndication.com)
 tempsmss.com##+js(prevent-fetch, pagead2.googlesyndication.com)
-||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$script,redirect=noop.js,domain=z-lib.io
 quienhabla.mx##+js(no-xhr-if, pagead2.googlesyndication.com)
 @@||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$domain=quienhabla.mx,xhr
 replica-watch.info##+js(prevent-fetch, pagead2.googlesyndication.com)
@@ -901,7 +900,7 @@ polsatsport.pl##.fl-right > a[href^="http://redefineadpl.hit.gemius.pl/hitredir/
 @@||pagead2.googlesyndication.com/pagead/js/*/show_ads_impl.js$domain=skript.pl
 tvpparlament.pl,tvp.pl,tvp.info,swipeto.pl##+js(prevent-fetch, pagead2.googlesyndication.com)
 ||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$xhr,redirect=noop.js,domain=tvp.pl|swipeto.pl|tvp.info|tvpparlament.pl,script
-@@||stats.g.doubleclick.net/r/collect$image,domain=shinden.pl
+||securepubads.g.doubleclick.net/gpt/pubads_impl_$domain=shinden.pl,redirect=noop.txt,important,image,media,subdocument,stylesheet,script,xhr,other
 @@||pubads.g.doubleclick.net/ssai/event/*/master.m3u8$domain=digi24.ro
 dafontvn.com##+js(abort-current-script, document.createElement, googlesyndication.com)
 thichcode.net##+js(prevent-fetch, pagead2.googlesyndication.com)
