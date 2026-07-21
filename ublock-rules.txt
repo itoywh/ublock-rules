@@ -4,7 +4,7 @@
 !               YouTube JS 注入规则 + 乘风 3 组中文广告规则
 !               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-07-20 23:02 UTC
+! Last updated: 2026-07-21 22:59 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
