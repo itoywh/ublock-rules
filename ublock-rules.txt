@@ -4,7 +4,7 @@
 !               YouTube JS 注入规则 + 乘风 3 组中文广告规则
 !               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-07-21 22:59 UTC
+! Last updated: 2026-07-22 23:06 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
@@ -133,7 +133,7 @@ www.google.*##a[href^="https://www.googleadservices.com/pagead/aclk?"]
 @@||g.doubleclick.net/aclk?$popup,domain=bodas.com.mx|bodas.net|casamentos.com.br|casamentos.pt|casamiento.com.uy|casamientos.com.ar|mariages.net|matrimonio.com|matrimonio.com.co|matrimonio.com.pe|matrimonios.cl|pianobuyer.com|weddingspot.co.uk|zillow.com
 @@||www.ticketmaster.$popup,domain=adclick.g.doubleclick.net
 
-! ===== AdGuard Filter 2 YouTube Rules (1022 rules) =====
+! ===== AdGuard Filter 2 YouTube Rules (1023 rules) =====
 ! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测
 ! Good: ||doubleclick.net^$third-party
 ! Good: ||ad.doubleclick.net^
@@ -448,6 +448,7 @@ av-th.xyz##+js(prevent-fetch, pagead2.googlesyndication.com)
 magesy.download##+js(prevent-fetch, pagead2.googlesyndication.com)
 @@||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js|$domain=iconmonstr.com,xhr
 blog.nationapk.com##+js(prevent-fetch, pagead2.googlesyndication.com)
+upfilesgo.com,upplinks.net,upfion.com,upfiles.app,upfiles-urls.com,falpus.com,fooak.com##+js(prevent-fetch, pagead2.googlesyndication.com)
 upfilesgo.com,upplinks.net,upfion.com,upfiles.app,upfiles-urls.com,falpus.com,fooak.com##+js(prevent-fetch, pagead2.googlesyndication.com)
 @@||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$xhr,domain=falpus.com|fooak.com|upfiles-urls.com|upfiles.app|upfion.com
 ||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$redirect=googlesyndication_adsbygoogle.js,domain=t2bot.ru,important,script
