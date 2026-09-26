@@ -4,7 +4,7 @@
 !               YouTube JS 注入规则 + 乘风 3 组中文广告规则
 !               每日自动更新, uBlock Origin 订阅此文件即可
 ! Homepage: https://github.com/itoywh/ublock-rules
-! Last updated: 2026-09-25 00:20 UTC
+! Last updated: 2026-09-26 00:25 UTC
 ! ============================================================
 ! Sources:
 !   1. EasyList (YouTube only) - daily fetch
@@ -133,7 +133,7 @@ www.google.*##a[href^="https://www.googleadservices.com/pagead/aclk?"]
 @@||g.doubleclick.net/aclk?$popup,domain=bodas.com.mx|bodas.net|casamentos.com.br|casamentos.pt|casamiento.com.uy|casamientos.com.ar|mariages.net|matrimonio.com|matrimonio.com.co|matrimonio.com.pe|matrimonios.cl|pianobuyer.com|weddingspot.co.uk|zillow.com
 @@||www.ticketmaster.$popup,domain=adclick.g.doubleclick.net
 
-! ===== AdGuard Filter 2 YouTube Rules (1017 rules) =====
+! ===== AdGuard Filter 2 YouTube Rules (1014 rules) =====
 ! JS 脚本注入 + 网络请求拦截 + CSS 隐藏, 对抗 YouTube 反广告检测
 ! Good: ||doubleclick.net^$third-party
 ! Good: ||ad.doubleclick.net^
@@ -826,6 +826,7 @@ bombuj.si##+js(prevent-fetch, pagead2.googlesyndication.com)
 zdopravy.cz##+js(prevent-fetch, pagead2.googlesyndication.com)
 ||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$script,redirect=noop.js,important,domain=svetandroida.cz
 @@||pubads.g.doubleclick.net/gampad/ads?*=xml_vast*nova.cz$domain=nova.cz
+bold.dk##+js(prevent-fetch, securepubads.g.doubleclick.net/gampad/ads)
 senest.dk##+js(prevent-fetch, pagead2.googlesyndication.com)
 toedolio5.gr##a.tdm-inline-image-wrap:not([href*="youtube.com"],[href*="https://toedolio"])
 13tv.co.il##+js(prevent-fetch, www3.doubleclick.net)
@@ -965,8 +966,6 @@ interest.co.nz#@#a[href^="https://ad.doubleclick.net/"]
 @@||servedby.flashtalking.com/imp/$xhr,domain=safeframe.googlesyndication.com
 @@||cdn.flashtalking.com/*.mp4?cb=$media,domain=safeframe.googlesyndication.com
 ||cdn.flashtalking.com/*.mp4?cb=$media,redirect=noop-1s.mp4,domain=safeframe.googlesyndication.com,important
-@@||securepubads.g.doubleclick.net/tag/js/gpt.js$domain=fifetoday.co.uk
-@@||securepubads.g.doubleclick.net/pagead/managed/js/gpt/$domain=fifetoday.co.uk
 @@||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js$domain=cercopes-z.com
 @@||securepubads.g.doubleclick.net/tag/js/gpt.js$domain=theglobeandmail.com
 @@||securepubads.g.doubleclick.net/pagead/managed/js/gpt/*/pubads_impl.js$domain=theglobeandmail.com
@@ -996,7 +995,6 @@ interest.co.nz#@#a[href^="https://ad.doubleclick.net/"]
 ||securepubads.g.doubleclick.net/pagead/ppub_config$xhr,redirect=noop.json,domain=independent.co.uk,important
 @@||securepubads.g.doubleclick.net/pagead/ppub_config$domain=independent.co.uk
 @@||pubads.g.doubleclick.net/ssai/event/*/streams$domain=engine.univtec.com|america.cgtn.com
-@@||securepubads.g.doubleclick.net/gpt/pubads_impl_*.js$domain=thestar.co.uk
 @@||static.doubleclick.net/instream/ad_status.js$domain=investing.com
 @@||pubads.g.doubleclick.net/ssai/event/*/streams$xhr,domain=wsls.com
 @@||securepubads.g.doubleclick.net/tag/js/gpt.js$domain=factable.com
@@ -1017,7 +1015,6 @@ interest.co.nz#@#a[href^="https://ad.doubleclick.net/"]
 @@||gstatic.com/admanager/outstream/rewarded_web_video_$script,domain=safeframe.googlesyndication.com
 ||googlevideo.com/videoplayback?$media,redirect=noop-1s.mp4,domain=safeframe.googlesyndication.com
 safeframe.googlesyndication.com##.left-container
-@@||securepubads.g.doubleclick.net/gpt/pubads_impl_*.js$domain=falkirkherald.co.uk
 @@||securepubads.g.doubleclick.net/gpt/pubads_impl_*.js$domain=topuniversities.com
 @@||pubads.g.doubleclick.net/ssai/event/*/streams$xhr,domain=rotana.net
 @@||securepubads.g.doubleclick.net/pagead/ppub_config$domain=downdetector.in
